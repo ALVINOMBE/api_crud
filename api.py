@@ -122,3 +122,17 @@ def update_customer(id):
     except Exception as e:
         logging.error(f"Error in update_customer route: {str(e)}")
         return make_response(jsonify({"Error": "Internal server error"}), 500)
+    
+@app.route("/customer/<int:id>", methods=["DELETE"])
+def delete_customer(id):
+    try: 
+        query = """DELETE FROM customers WHERE customersid = %s"""
+        params = (id,)
+        rows_affected = execute_query(query, params)
+        return make_response(jsonify({"message": "customer deleted successfully", "rows_affected": rows_affected}), 200)
+    except Exception as e:
+        logging.error(f"Error in delete_customer route: {str(e)}")
+        return make_response(jsonify({"Error": "Internal server error"}), 500)
+
+if __name__ == "__main__":
+    app.run(debug=True)
