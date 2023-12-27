@@ -105,3 +105,20 @@ def add_customers():
     except Exception as e:
         logging.error(f"Error in add_customers route: {str(e)}")
         return make_response(jsonify({"Error": "Internal server error"}), 500)
+
+@app.route("/customer/<int:id>", methods=["PUT"])
+def update_customer(id):
+    try: 
+        info = request.get_json()
+        required_fields = ["first_name", "last_name", "middle_name", "gender", "email", "street_address", "city", "country"]
+
+        if not validate_input(info, required_fields):
+            return make_response(jsonify({"Error": "Missing required fields"}), 400)
+
+        query = """UPDATE customers SET first_name = %s, last_name = %s, middle_name = %s, gender = %s, email = %s, street_address = %s, city = %s, country = %s WHERE customersid = %s"""
+        params = (info["first_name"], info["last_name"], info["middle_name"], info["gender"], info["email"], info["street_address"], info["city"], info["country"], id)
+        rows_affected = execute_query(query, params)
+        return make_response(jsonify({"message": "customer updated successfully", "rows_affected": rows_affected}), 200)
+    except Exception as e:
+        logging.error(f"Error in update_customer route: {str(e)}")
+        return make_response(jsonify({"Error": "Internal server error"}), 500)
