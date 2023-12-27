@@ -41,6 +41,41 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("Error", data)
         
+    def test_update_customer(self):
+        data = {
+            "first_name": "Updated",
+            "last_name": "Doe",
+            "middle_name": "M",
+            "gender": "Male",
+            "email": "john.doe@example.com",
+            "street_address": "123 Main St",
+            "city": "Cityville",
+            "country": "Countryland"
+        }
+
+        response = self.app.put('/customer/1', json=data)
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["message"], "customer updated successfully")
+
+    def test_update_customer_invalid_data(self):
+        data = {
+            "first_name": "Updated",
+            "last_name": "Doe",
+            "middle_name": "M",
+            "gender": "Male",
+            "email": "john.doe@example.com",
+            "street_address": "123 Main St",
+            "city": "Cityville",
+            "country": "Countryland"
+        }
+
+        response = self.app.put('/customer/33', json=data)
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Error", data)
         
 if __name__ == '__main__':
     unittest.main()
