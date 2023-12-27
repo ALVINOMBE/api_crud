@@ -77,5 +77,21 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertIn("Error", data)
         
+    def test_delete_customer(self):
+        response = self.app.delete('/customer/24')
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["message"], "customer deleted successfully")
+        self.assertIn("rows_affected", data)
+        self.assertEqual(data["rows_affected"], 1)  
+    def test_delete_customer_nonexistent_id(self):
+        response = self.app.delete('/customer/33')
+        data = json.loads(response.get_data(as_text=True))
+
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("Error", data)
+        self.assertIn("customer not found", data["Error"])
+        
 if __name__ == '__main__':
     unittest.main()
